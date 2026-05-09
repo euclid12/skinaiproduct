@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skin AI – Skincare Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --blush: #E8C4B0;
+    --rose: #C97B63;
+    --deep: #2A1F1A;
+    --sage: #8FAF8A;
+    --sage-light: #C8DFC5;
+    --gold: #C9A96E;
+    --text: #3D2B22;
+    --muted: #9A8070;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(232,196,176,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(143,175,138,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 60px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .logo-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--rose), var(--blush));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(201,123,99,0.35);
+    overflow: hidden;
+  }
+
+  .logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  .logo-fallback {
+    font-size: 28px;
+  }
+
+  .logo-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--deep);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-sub {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: var(--sage-light);
+    color: var(--sage);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 1.05;
+    font-weight: 900;
+    color: var(--deep);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--rose);
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 440px;
+    margin-bottom: 48px;
+    font-weight: 300;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  .btn-primary {
+    background: var(--deep);
+    color: var(--cream);
+    padding: 16px 36px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-primary:hover {
+    background: var(--rose);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(201,123,99,0.4);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    padding: 16px 36px;
+    border-radius: 100px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid rgba(61,43,34,0.2);
+    transition: all 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+    transform: translateY(-2px);
+  }
+
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    padding: 60px 40px;
+  }
+
+  .phone-mockup {
+    width: 280px;
+    height: 580px;
+    background: var(--deep);
+    border-radius: 44px;
+    box-shadow:
+      0 40px 100px rgba(42,31,26,0.35),
+      0 0 0 8px rgba(42,31,26,0.08),
+      inset 0 0 0 2px rgba(255,255,255,0.08);
+    position: relative;
+    animation: floatPhone 6s ease-in-out infinite, fadeUp 1s 0.5s ease both;
+    overflow: hidden;
+  }
+
+  .phone-notch {
+    width: 100px;
+    height: 28px;
+    background: var(--deep);
+    border-radius: 0 0 20px 20px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .phone-screen {
+    position: absolute;
+    inset: 6px;
+    border-radius: 40px;
+    background: linear-gradient(160deg, #FFF8F4 0%, #F5EDE6 50%, #EDD5C5 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-header {
+    padding: 48px 20px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phone-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--rose), var(--blush));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    overflow: hidden;
+  }
+
+  .phone-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .phone-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--deep);
+  }
+
+  .scan-area {
+    margin: 8px 20px;
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(42,31,26,0.08);
+  }
+
+  .scan-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .scan-box {
+    width: 100%;
+    height: 100px;
+    border: 2px dashed var(--blush);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-line {
+    position: absolute;
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    animation: scanLine 2s ease-in-out infinite;
+    border-radius: 1px;
+  }
+
+  .scan-icon { font-size: 24px; }
+  .scan-text { font-size: 10px; color: var(--muted); }
+
+  .result-card {
+    margin: 12px 20px;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 20px rgba(42,31,26,0.06);
+  }
+
+  .result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .result-name { font-size: 11px; font-weight: 500; color: var(--deep); }
+
+  .score-badge {
+    background: var(--sage-light);
+    color: var(--sage);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  .ingredient-rows { display: flex; flex-direction: column; gap: 6px; }
+
+  .ing-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .ing-name { font-size: 9px; color: var(--text); flex: 1; }
+  .ing-tag { font-size: 8px; padding: 2px 7px; border-radius: 100px; font-weight: 500; }
+
+  .tag-safe { background: #E8F5E4; color: #5A9A51; }
+  .tag-warn { background: #FFF3E0; color: #E07B2A; }
+  .tag-bad  { background: #FDECEA; color: #C0392B; }
+
+  .phone-bottom {
+    margin-top: auto;
+    padding: 12px 20px 20px;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .nav-icon { font-size: 16px; }
+  .nav-label { font-size: 7px; color: var(--muted); }
+  .nav-item.active .nav-label { color: var(--rose); }
+
+  /* ── DECORATIVE CIRCLES ── */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .deco-1 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(232,196,176,0.3), transparent 70%);
+    top: -100px; right: -100px;
+  }
+
+  .deco-2 {
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(143,175,138,0.25), transparent 70%);
+    bottom: 50px; left: -60px;
+    animation-delay: -3s;
+  }
+
+  /* ── FEATURES ── */
+  .features {
+    padding: 120px 80px;
+    background: var(--deep);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .features::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,123,99,0.15), transparent 70%);
+    pointer-events: none;
+  }
+
+  .section-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 70px;
+    max-width: 500px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.04);
+    padding: 48px 36px;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,123,99,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .feature-card:hover { background: rgba(255,255,255,0.07); }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-card:first-child { border-radius: 24px 0 0 0; }
+  .feature-card:nth-child(3) { border-radius: 0 24px 0 0; }
+  .feature-card:nth-child(4) { border-radius: 0 0 0 24px; }
+  .feature-card:last-child { border-radius: 0 0 24px 0; }
+
+  .feature-icon {
+    font-size: 36px;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 12px;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(250,247,242,0.5);
+    font-weight: 300;
+  }
+
+  /* ── SAFETY ── */
+  .safety {
+    padding: 120px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .safety-visual {
+    position: relative;
+  }
+
+  .safety-card {
+    background: white;
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 20px 80px rgba(42,31,26,0.12);
+  }
+
+  .safety-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--deep);
+    margin-bottom: 24px;
+  }
+
+  .ingredient-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .ing-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: var(--cream);
+  }
+
+  .ing-left { display: flex; align-items: center; gap: 12px; }
+  .ing-emoji { font-size: 18px; }
+  .ing-info { display: flex; flex-direction: column; }
+  .ing-n { font-size: 13px; font-weight: 500; color: var(--deep); }
+  .ing-c { font-size: 11px; color: var(--muted); }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .badge-safe { background: #E8F5E4; color: #4A8A41; }
+  .badge-warn { background: #FFF3E0; color: #D06A1A; }
+  .badge-bad  { background: #FDECEA; color: #B0291B; }
+
+  .floating-score {
+    position: absolute;
+    top: -24px;
+    right: -24px;
+    width: 90px;
+    height: 90px;
+    background: var(--rose);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 30px rgba(201,123,99,0.5);
+    animation: floatPhone 4s ease-in-out infinite;
+  }
+
+  .score-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+  }
+
+  .score-lbl { font-size: 9px; color: rgba(255,255,255,0.8); letter-spacing: 1px; }
+
+  .safety-text {}
+
+  .safety-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 3.5vw, 48px);
+    font-weight: 900;
+    color: var(--deep);
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .safety-text h2 em { font-style: italic; color: var(--rose); }
+
+  .safety-text p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+
+  .check-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .check-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--sage-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    color: var(--sage);
+  }
+
+  /* ── STATS ── */
+  .stats {
+    background: linear-gradient(135deg, var(--rose) 0%, #B56A52 100%);
+    padding: 80px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    text-align: center;
+  }
+
+  .stat-item {}
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .stat-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.2);
+    align-self: stretch;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--deep);
+    padding: 60px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: rgba(250,247,242,0.5);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--blush); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(250,247,242,0.3);
+    letter-spacing: 0.5px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes floatPhone {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-16px); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-20px); }
+  }
+
+  @keyframes scanLine {
+    0%   { top: 20%; opacity: 1; }
+    50%  { top: 75%; opacity: 1; }
+    100% { top: 20%; opacity: 1; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 60px 32px; }
+    .features { padding: 80px 32px; }
+    .features-grid { grid-template-columns: 1fr; gap: 2px; }
+    .feature-card:first-child,
+    .feature-card:nth-child(3),
+    .feature-card:nth-child(4),
+    .feature-card:last-child { border-radius: 0; }
+    .feature-card:first-child { border-radius: 24px 24px 0 0; }
+    .feature-card:last-child { border-radius: 0 0 24px 24px; }
+    .safety { grid-template-columns: 1fr; padding: 80px 32px; gap: 40px; }
+    .stats { grid-template-columns: 1fr; padding: 60px 32px; }
+    .stat-divider { display: none; }
+    footer { padding: 40px 32px; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="deco-circle deco-1"></div>
+  <div class="deco-circle deco-2"></div>
+
+  <div class="hero-left">
+    <div class="logo-area">
+      <div class="logo-box">
+        <img src="logo.png" alt="Skin AI Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span class="logo-fallback" style="display:none">🌿</span>
+      </div>
+      <div>
+        <div class="logo-name">Skin AI</div>
+        <div class="logo-sub">Skincare Scanner</div>
+      </div>
+    </div>
+
+    <span class="hero-tag">✦ AI-Powered Skincare</span>
+
+    <h1>Know what's <em>really</em> in your skincare.</h1>
+
+    <p class="hero-desc">
+      Scan any label or barcode, flag harmful ingredients, and build the perfect routine tailored to your unique skin type — all in seconds.
+    </p>
+
+    <div class="cta-row">
+      <a href="#" class="btn-primary">
+        <span>⬇</span> Download Free
+      </a>
+      <a href="#features" class="btn-secondary">See Features</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-mockup">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-header">
+          <div class="phone-logo">
+            <img src="logo.png" alt="" onerror="this.style.display='none';this.parentElement.innerHTML='🌿'">
+          </div>
+          <div class="phone-title">Skin AI</div>
+        </div>
+
+        <div class="scan-area">
+          <div class="scan-label">Scan Ingredient Label</div>
+          <div class="scan-box">
+            <div class="scan-line"></div>
+            <span class="scan-icon">📸</span>
+            <span class="scan-text">Tap to scan or take a photo</span>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-header">
+            <span class="result-name">CeraVe Moisturising Cream</span>
+            <span class="score-badge">Score 82</span>
+          </div>
+          <div class="ingredient-rows">
+            <div class="ing-row">
+              <div class="ing-dot" style="background:#4A8A41"></div>
+              <span class="ing-name">Ceramide NP</span>
+              <span class="ing-tag tag-safe">Safe ✓</span>
+            </div>
+            <div class="ing-row">
+              <div class="ing-dot" style="background:#E07B2A"></div>
+              <span class="ing-name">Fragrance</span>
+              <span class="ing-tag tag-warn">Caution ⚠</span>
+            </div>
+            <div class="ing-row">
+              <div class="ing-dot" style="background:#4A8A41"></div>
+              <span class="ing-name">Hyaluronic Acid</span>
+              <span class="ing-tag tag-safe">Safe ✓</span>
+            </div>
+            <div class="ing-row">
+              <div class="ing-dot" style="background:#C0392B"></div>
+              <span class="ing-name">Paraben</span>
+              <span class="ing-tag tag-bad">Avoid ✗</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="phone-bottom">
+          <div class="nav-item active">
+            <span class="nav-icon">🔍</span>
+            <span class="nav-label">Scan</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Routine</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">🔖</span>
+            <span class="nav-label">Saved</span>
+          </div>
+          <div class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">Profile</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">2M+</div>
+    <div class="stat-label">Products Analyzed</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-num">15K+</div>
+    <div class="stat-label">Ingredients Assessed</div>
+  </div>
+  <div class="stat-divider"></div>
+  <div class="stat-item">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Unbiased Ratings</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-tag">✦ What We Offer</p>
+  <h2 class="section-title">Everything your skin needs to stay safe.</h2>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📸</span>
+      <div class="feature-title">AI Label Scanner</div>
+      <p class="feature-desc">No barcode? No problem. Just snap a photo of any bottle and our AI instantly reads and analyzes the full ingredient list.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔍</span>
+      <div class="feature-title">Barcode Scanner</div>
+      <p class="feature-desc">Shopping in-store? Scan the barcode for an instant safety rating and ingredient profile before you buy.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧪</span>
+      <div class="feature-title">Deep Ingredient Analysis</div>
+      <p class="feature-desc">Every ingredient flagged — parabens, sulfates, endocrine disruptors, allergens, and beneficial actives clearly identified.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🧬</span>
+      <div class="feature-title">Skin Match</div>
+      <p class="feature-desc">Take our quick skin quiz and get every analysis personalized to your skin type — oily, dry, combination, or sensitive.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌿</span>
+      <div class="feature-title">Clean Alternatives</div>
+      <p class="feature-desc">Product scored poorly? We suggest safer, cleaner, highly-rated alternatives matched to your skincare goals.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📅</span>
+      <div class="feature-title">Build Your Routine</div>
+      <p class="feature-desc">Track your morning and night routines, ensure products layer well, and stay consistent on your skincare journey.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SAFETY SECTION -->
+<section class="safety">
+  <div class="safety-visual">
+    <div class="safety-card">
+      <div class="safety-card-title">Ingredient Breakdown</div>
+      <div class="ingredient-list">
+        <div class="ing-item">
+          <div class="ing-left">
+            <span class="ing-emoji">💧</span>
+            <div class="ing-info">
+              <span class="ing-n">Hyaluronic Acid</span>
+              <span class="ing-c">Humectant · Hydrating</span>
+            </div>
+          </div>
+          <span class="badge badge-safe">Safe</span>
+        </div>
+        <div class="ing-item">
+          <div class="ing-left">
+            <span class="ing-emoji">🌸</span>
+            <div class="ing-info">
+              <span class="ing-n">Niacinamide</span>
+              <span class="ing-c">Vitamin B3 · Brightening</span>
+            </div>
+          </div>
+          <span class="badge badge-safe">Safe</span>
+        </div>
+        <div class="ing-item">
+          <div class="ing-left">
+            <span class="ing-emoji">⚗️</span>
+            <div class="ing-info">
+              <span class="ing-n">Methylparaben</span>
+              <span class="ing-c">Preservative · Endocrine disruptor</span>
+            </div>
+          </div>
+          <span class="badge badge-bad">Avoid</span>
+        </div>
+        <div class="ing-item">
+          <div class="ing-left">
+            <span class="ing-emoji">🌿</span>
+            <div class="ing-info">
+              <span class="ing-n">Fragrance</span>
+              <span class="ing-c">Parfum · Potential irritant</span>
+            </div>
+          </div>
+          <span class="badge badge-warn">Caution</span>
+        </div>
+      </div>
+    </div>
+    <div class="floating-score">
+      <span class="score-num">76</span>
+      <span class="score-lbl">SCORE</span>
+    </div>
+  </div>
+
+  <div class="safety-text">
+    <p class="section-tag">✦ Ingredient Safety</p>
+    <h2>Stop guessing what you put on your <em>skin.</em></h2>
+    <p>Skin AI decodes every ingredient on the label — flagging what's harmful and highlighting what genuinely benefits your skin. Science-backed, always unbiased.</p>
+    <div class="check-list">
+      <div class="check-item">
+        <div class="check-dot">✓</div>
+        Parabens, sulfates & silicones flagged
+      </div>
+      <div class="check-item">
+        <div class="check-dot">✓</div>
+        Allergens & skin irritants identified
+      </div>
+      <div class="check-item">
+        <div class="check-dot">✓</div>
+        Endocrine disruptors highlighted
+      </div>
+      <div class="check-item">
+        <div class="check-dot">✓</div>
+        Beneficial actives celebrated
+      </div>
+      <div class="check-item">
+        <div class="check-dot">✓</div>
+        Personalized to your skin type
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Skin AI · Skincare Scanner</div>
+  <div class="footer-links">
+    <a href="https://sites.google.com/view/skincareaiproduct/accueil" target="_blank">Privacy Policy</a>
+    <a href="https://sites.google.com/view/skincareaiproduct/accueil" target="_blank">Terms of Use</a>
+  </div>
+  <div class="footer-copy">© 2026 Skin AI. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
